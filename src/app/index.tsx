@@ -1,61 +1,56 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
+import { ColorGrid } from '@/components/game/color-grid';
+import { GameHud } from '@/components/game/game-hud';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useOddColorGame } from '@/hooks/use-odd-color-game';
+import { useTheme } from '@/hooks/use-theme';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+export default function GameScreen() {
+  const { state, selectTile, restart } = useOddColorGame();
+  const { puzzle } = state;
+  const theme = useTheme();
 
-export default function HomeScreen() {
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
+        <ThemedText type="smallBold" style={styles.prompt}>
+          Tap the color that doesn&apos;t match.
         </ThemedText>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+        <GameHud level={state.level} rows={puzzle.rows} cols={puzzle.cols} score={state.score} />
 
-        {Platform.OS === 'web' && <WebBadge />}
+        <ColorGrid
+          rows={puzzle.rows}
+          cols={puzzle.cols}
+          baseColor={puzzle.baseHex}
+          oddColor={puzzle.oddHex}
+          oddIndex={puzzle.oddIndex}
+          onSelect={selectTile}
+          wrongIndex={state.wrongIndex}
+          wrongCount={state.wrongCount}
+        />
+
+        <ThemedText
+          type="small"
+          themeColor="textSecondary"
+          accessibilityLiveRegion="polite"
+          style={styles.feedback}>
+          {state.status === 'wrong' ? 'Not that one. Try again.' : ' '}
+        </ThemedText>
+
+        <Pressable
+          onPress={restart}
+          accessibilityRole="button"
+          style={({ pressed }) => [
+            styles.restart,
+            { backgroundColor: pressed ? theme.backgroundSelected : theme.backgroundElement },
+          ]}>
+          <ThemedText type="smallBold">Restart</ThemedText>
+        </Pressable>
       </SafeAreaView>
     </ThemedView>
   );
@@ -64,35 +59,30 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     flexDirection: 'row',
+    justifyContent: 'center',
   },
   safeArea: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
+    maxWidth: MaxContentWidth,
     alignItems: 'center',
     gap: Spacing.three,
+    paddingHorizontal: Spacing.three,
+    paddingTop: Spacing.three,
     paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
+  prompt: {
     textAlign: 'center',
   },
-  code: {
-    textTransform: 'uppercase',
+  feedback: {
+    minHeight: 20,
+    textAlign: 'center',
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
+  restart: {
+    minHeight: 44,
+    paddingHorizontal: Spacing.four,
     borderRadius: Spacing.four,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
