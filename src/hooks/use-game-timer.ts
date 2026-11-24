@@ -74,3 +74,10 @@ export function useGameTimer({ levelSeconds = 15, onTimeUp }: GameTimerOptions =
         isTimerRunning,
     };
 }
+
+
+// todo in the real game screen
+// call timer.startTimer() from the start or restart handler once the game is ready
+// call timer.resetTimer() after the next level is ready to play
+// check timer.isTimerRunning() before accepting a tile tap
+// pass the team's game over function as onTimeUp when calling useGameTimer

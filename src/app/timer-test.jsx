@@ -24,7 +24,7 @@ export default function TimerTestScreen() {
 		},
 	});
 
-	return (
+	return ( // controlling where the timer and heart systems go is up to the team, but this is a good example of how to use them together
 		<SafeAreaView style={{ flex: 1, padding: 24, gap: 12, backgroundColor: 'white' }}>
 			<LivesTimerHud
 				hearts={lives.hearts}
@@ -54,3 +54,9 @@ export default function TimerTestScreen() {
 		</SafeAreaView>
 	);
 }
+
+// todo use this temporary route to test the hearts, countdown and game over
+// on web, add both test routes inside TabList in src/components/app-tabs.web.tsx
+// put the two temporary TabTrigger entries after the Explore entry
+// delete this file once the real game screen uses the hooks and hud
+// also a good example of how to use react overall to manage game state and transitions between screens

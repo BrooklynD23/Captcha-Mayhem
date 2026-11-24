@@ -15,3 +15,5 @@ export default function TimerTestEndScreen() {
 		</SafeAreaView>
 	);
 }
+
+// todo delete this temporary game over screen after testing the real end screen

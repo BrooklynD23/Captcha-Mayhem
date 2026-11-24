@@ -34,3 +34,9 @@ export function useGameHearts({
 
     return { hearts, maxHearts, loseHeart, resetHearts };
 }
+
+// todo in the real game screen
+// call lives.resetHearts() when starting or restarting a game
+// call lives.loseHeart() from the wrong tile handler
+// connect onHeartLost to timer.addTime(3)
+// connect onOutOfHearts to timer.stopTimer() and the team's game over function

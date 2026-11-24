@@ -52,3 +52,7 @@ const styles = StyleSheet.create({
 		fontVariant: ['tabular-nums'],
 	},
 });
+
+// todo in the real game screen
+// import LivesTimerHud and render it above the tile grid
+// pass lives.hearts, lives.maxHearts and timer.secondsLeft as props
